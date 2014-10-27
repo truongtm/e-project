@@ -1,0 +1,210 @@
+CREATE DATABASE MailServer
+GO
+USE MailServer
+GO
+CREATE TABLE Roles
+(
+	ID int IDENTITY PRIMARY KEY not null,
+	Name nvarchar(100) not null
+)
+GO
+CREATE TABLE Users
+(
+	ID int IDENTITY PRIMARY KEY not null,
+	UserRoleID int FOREIGN KEY REFERENCES Roles(ID) not null,
+	UserName nvarchar(100) not null,
+	Password nvarchar(100) not null,
+	Name nvarchar(100) not null,
+	Gender nvarchar(100) not null,
+	Birthdate datetime not null,
+	Address nvarchar(1000) not null,
+	Phone int not null,
+	Email nvarchar(100) not null,
+	Picture nvarchar(1000) not null,
+	Professional nvarchar(1000) not null,
+	Personal nvarchar(1000) not null,
+	EducationalDetails nvarchar(1000) not null,
+	Status nvarchar
+)
+GO
+CREATE TABLE Picture
+(
+	ID int IDENTITY PRIMARY KEY not null,
+	PictureLink nvarchar(1000) not null
+)
+GO
+CREATE TABLE FileLink
+(
+	ID int IDENTITY PRIMARY KEY not null,
+	FileLink nvarchar(1000) not null
+)
+GO
+
+--Bang thong tin chi tiet ve 1 khoa hoc
+GO
+CREATE TABLE Courses
+(	
+	ID int IDENTITY PRIMARY KEY not null,
+	Name nvarchar(100) not null,
+	Information nvarchar(1000) not null,
+	StartTime datetime not null,
+	FinishTime datetime not null,
+	QuantityMax int not null,
+	TeacherID int FOREIGN KEY REFERENCES Users(ID) not null,
+	RegistrationStartDate datetime not null,
+	RegistrationClosingDate datetime not null,
+	Picture int FOREIGN KEY REFERENCES Picture(ID) not null
+)
+--Bang phong hoc
+GO
+CREATE TABLE Classrooms
+(
+	ID int IDENTITY PRIMARY KEY not null,
+	Name nvarchar(100) not null,
+	Status nvarchar(100)
+)
+--Bang tiet hoc
+GO
+CREATE TABLE Slot
+(
+	ID int IDENTITY PRIMARY KEY not null,
+	Name nvarchar(100) not null,
+	StartTime datetime not null,
+	FinishTime datetime not null
+)
+--Bang lich hoc
+GO
+CREATE TABLE Schedule
+(
+	ID int IDENTITY PRIMARY KEY not null,
+	SlotID int FOREIGN KEY REFERENCES Slot(ID) not null,
+	ClassroomsID int FOREIGN KEY REFERENCES Classrooms(ID) not null,
+	DateTime datetime not null
+)
+--Bang lop hoc
+GO
+CREATE TABLE Class
+(
+	ID int IDENTITY PRIMARY KEY not null,
+	CoursesID int FOREIGN KEY REFERENCES Courses(ID) not null,
+	Name nvarchar(100) not null,
+	TeacherID int FOREIGN KEY REFERENCES Users(ID) not null,
+	QuantityMax int not null,
+	ScheduleID int FOREIGN KEY REFERENCES Schedule(ID) not null,
+	StartTime datetime not null,
+	FinishTime datetime not null
+)
+--Bang su kien
+GO
+CREATE TABLE Events
+(
+	ID int IDENTITY PRIMARY KEY not null,
+	NameID int FOREIGN KEY REFERENCES Users(ID) not null,
+	EventName nvarchar(1000) not null,
+	Detail nvarchar(1000) not null,
+	StartTime datetime not null,
+	Address nvarchar(1000) not null
+)
+--Diem thi giua ky va cuoi ky
+GO
+CREATE TABLE DiemThi
+(
+	ID int IDENTITY PRIMARY KEY not null,
+	Student int FOREIGN KEY REFERENCES Users(ID) not null,
+	Teacher int FOREIGN KEY REFERENCES Users(ID) not null,
+	LyThuyet int not null,
+	ThucHanh int not null
+)
+--Diem kiem tra hoc phan
+GO
+CREATE TABLE DiemKiemTra
+(
+	ID int IDENTITY PRIMARY KEY not null,
+	Student int FOREIGN KEY REFERENCES Users(ID) not null,
+	Teacher int FOREIGN KEY REFERENCES Users(ID) not null,
+	Diem15P int,
+	Diem1Tiet int 
+)
+--Bang diem 
+GO
+CREATE TABLE Scores
+(
+	ID int IDENTITY PRIMARY KEY not null,
+	Student int FOREIGN KEY REFERENCES Users(ID) not null,
+	Teacher int FOREIGN KEY REFERENCES Users(ID) not null,
+	DiemThiID int FOREIGN KEY REFERENCES DiemThi(ID) not null,
+	DiemKiemTra int FOREIGN KEY REFERENCES DiemKiemTra(ID) not null
+)
+
+--Bang ket qua hoc tap
+GO
+CREATE TABLE Result
+(
+	ID int IDENTITY PRIMARY KEY not null,
+	CoursesID int FOREIGN KEY REFERENCES Courses(ID) not null,
+	ScoresID int FOREIGN KEY REFERENCES Scores(ID) not null,
+	Status nvarchar not null
+)
+--Bang email
+GO
+CREATE TABLE Email 
+(
+	ID int IDENTITY PRIMARY KEY not null,
+	Sender int FOREIGN KEY REFERENCES Users(ID) not null,
+	Recipient int FOREIGN KEY REFERENCES Users(ID) not null,
+	Title nvarchar(100) not null,
+	Content nvarchar(1000) not null,
+	DateTime datetime not null,
+	FilesLink int FOREIGN KEY REFERENCES FileLink(ID) not null,
+	Pictures int FOREIGN KEY REFERENCES Picture(ID) not null,
+	Status nvarchar not null
+)
+--Bang Assignment
+GO
+CREATE TABLE Assignment
+(
+	ID int IDENTITY PRIMARY KEY not null,
+	Teacher int FOREIGN KEY REFERENCES Users(ID) not null,
+	Student int FOREIGN KEY REFERENCES Users(ID) not null,
+	Title nvarchar(100) not null,
+	FilesLink int FOREIGN KEY REFERENCES FileLink(ID) not null,
+	DateTime datetime not null,
+	StartTime datetime not null,
+	FinishTime datetime not null
+)
+--Bang chat
+GO
+CREATE TABLE Inbox
+(
+	ID int IDENTITY PRIMARY KEY not null,
+	Sender int FOREIGN KEY REFERENCES Users(ID) not null,
+	Recipient int FOREIGN KEY REFERENCES Users(ID) not null,
+	Content nvarchar(1000) not null,
+	DateTime datetime not null,
+	FilesLink int FOREIGN KEY REFERENCES FileLink(ID) not null,
+	Pictures int FOREIGN KEY REFERENCES Picture(ID) not null
+)
+GO
+CREATE TABLE News
+(
+	ID int IDENTITY PRIMARY KEY not null,
+	Title nvarchar(100) not null,
+	Content nvarchar(1000) not null,
+	DateTime datetime not null,
+	FilesLink int FOREIGN KEY REFERENCES FileLink(ID) not null,
+	Pictures int FOREIGN KEY REFERENCES Picture(ID) not null,
+	Status nvarchar not null
+)
+GO
+CREATE TABLE Jobs
+(
+	ID int IDENTITY PRIMARY KEY not null,
+	Title nvarchar(100) not null,
+	Content nvarchar(1000) not null,
+	Recruiter nvarchar(1000) not null,
+	Address nvarchar(1000) not null,
+	Phone int not null,
+	Email nvarchar(100) not null,
+	FilesLink int FOREIGN KEY REFERENCES FileLink(ID) not null,
+	Pictures int FOREIGN KEY REFERENCES Picture(ID) not null
+)
